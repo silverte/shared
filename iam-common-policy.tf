@@ -87,7 +87,8 @@ module "iam_policy_restrict_region" {
               "ec2:DescribeVpcs",
               "access-analyzer:*",
               "acm:*",
-              "organizations:*"
+              "organizations:*",
+              "kms:*"
           ],
           "Resource": "*"
       }
