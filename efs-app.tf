@@ -8,10 +8,9 @@ module "efs-app" {
   count  = length(data.aws_subnets.app) > 0 ? 1 : 0
 
   # File system
-  name                   = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
-  creation_token         = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
-  encrypted              = true
-  availability_zone_name = local.azs
+  name           = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
+  creation_token = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
+  encrypted      = true
 
   # Used to create a file system that uses One Zone storage classes
   # availability_zone_name = local.azs[0]
@@ -43,7 +42,7 @@ module "efs-app" {
   # ]
 
   # Mount targets
-  mount_targets = { for k, v in zipmap(local.azs, data.aws_subnets.private.ids) : k => { subnet_id = v } }
+  mount_targets = { for k, v in zipmap(local.azs, data.aws_subnets.app.ids) : k => { subnet_id = v } }
   # one zone class only!
   # mount_targets = {
   #   "${local.azs[0]}" = {

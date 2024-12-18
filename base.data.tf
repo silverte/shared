@@ -58,3 +58,11 @@ data "aws_subnets" "endpoint" {
     values = ["*ep*"] # database subnet에 대한 태그 패턴
   }
 }
+
+# management에서 생성된 KMS 키의 ARN 또는 동일 계정에서 생성한 Alias를 사용하여 Data Source를 정의
+data "aws_kms_key" "ebs" {
+  key_id = var.management_ebs_kms_key_arn
+}
+data "aws_kms_key" "rds" {
+  key_id = var.management_rds_kms_key_arn
+}

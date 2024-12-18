@@ -1,25 +1,3 @@
-module "security_group_eks" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
-  create  = var.create_alb
-
-  name            = "scg-${var.service}-${var.environment}-alb-container"
-  use_name_prefix = false
-  description     = "Security group for EKS ALB ingress "
-  vpc_id          = data.aws_vpc.vpc.id
-
-  # ingress_cidr_blocks = ["0.0.0.0/0"]
-  # ingress_rules       = ["https-443-tcp", "all-icmp"]
-  # egress_rules = ["all-all"]
-
-  tags = merge(
-    local.tags,
-    {
-      "Name" = "scg-${var.service}-${var.environment}-alb-container"
-    },
-  )
-}
-
 module "alb_vm" {
   source = "terraform-aws-modules/alb/aws"
 
@@ -28,15 +6,16 @@ module "alb_vm" {
   subnets = data.aws_subnets.elb.ids
 
   # Security Group
-  security_group_name            = "scg-${var.service}-${var.environment}-alb-vm"
-  security_group_use_name_prefix = false
-  security_group_description     = "Security group for VM ALB ingress"
-  security_group_tags = merge(
-    local.tags,
-    {
-      "Name" = "scg-${var.service}-${var.environment}-alb-vm"
-    },
-  )
+  security_groups = [module.security_group_alb_vm.security_group_id]
+  # security_group_name            = "scg-${var.service}-${var.environment}-alb-vm"
+  # security_group_use_name_prefix = false
+  # security_group_description     = "Security group for VM ALB ingress"
+  # security_group_tags = merge(
+  #   local.tags,
+  #   {
+  #     "Name" = "scg-${var.service}-${var.environment}-alb-vm"
+  #   },
+  # )
 
   # security_group_ingress_rules = {
   #   all_http = {
