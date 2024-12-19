@@ -120,9 +120,9 @@ module "eks" {
         }
       )
 
-      min_size     = 1
+      min_size     = 0
       max_size     = 2
-      desired_size = 1
+      desired_size = 0
 
       taints = {
         # This Taint aims to keep just EKS Addons and Karpenter running on this MNG

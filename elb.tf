@@ -7,7 +7,8 @@ module "alb_vm" {
   internal = true
 
   # Security Group
-  security_groups = [module.security_group_alb_vm.security_group_id]
+  create_security_group = false
+  security_groups       = [module.security_group_alb_vm.security_group_id]
   # security_group_name            = "scg-${var.service}-${var.environment}-alb-vm"
   # security_group_use_name_prefix = false
   # security_group_description     = "Security group for VM ALB ingress"
