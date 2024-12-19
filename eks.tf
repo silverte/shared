@@ -30,7 +30,7 @@ module "eks" {
   cluster_security_group_tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-alb-container"
+      "Name" = "scg-${var.service}-${var.environment}-eks-cluster"
     },
   )
 

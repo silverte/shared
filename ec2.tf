@@ -15,12 +15,12 @@ data "aws_ami" "ec2_ami" {
 
 module "ec2_sms" {
   source = "terraform-aws-modules/ec2-instance/aws"
-  create = var.create_ec2_mig_db
+  create = var.create_ec2_sms
 
   name = "ec2-${var.service}-${var.environment}-sms"
 
   ami                         = data.aws_ami.ec2_ami.id
-  instance_type               = var.ec2_mig_db_instance_type
+  instance_type               = var.ec2_sms_instance_type
   availability_zone           = element(local.azs, 0)
   subnet_id                   = data.aws_subnets.app.ids[0]
   vpc_security_group_ids      = [module.security_group_ec2_sms.security_group_id]
@@ -31,6 +31,7 @@ module "ec2_sms" {
   hibernation                 = false
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
+  private_ip                  = var.ec2_sms_private_ip
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -59,7 +60,7 @@ module "ec2_sms" {
     {
       device_name = "/dev/sdf"
       volume_type = "gp3"
-      volume_size = var.ec2_mig_db_ebs_volume_size
+      volume_size = var.ec2_sms_ebs_volume_size
       encrypted   = true
       kms_key_id  = data.aws_kms_key.ebs.arn
       tags = merge(

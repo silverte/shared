@@ -1,9 +1,10 @@
 module "alb_vm" {
   source = "terraform-aws-modules/alb/aws"
 
-  name    = "alb-${var.service}-${var.environment}-vm"
-  vpc_id  = data.aws_vpc.vpc.id
-  subnets = data.aws_subnets.elb.ids
+  name     = "alb-${var.service}-${var.environment}-vm"
+  vpc_id   = data.aws_vpc.vpc.id
+  subnets  = data.aws_subnets.elb.ids
+  internal = true
 
   # Security Group
   security_groups = [module.security_group_alb_vm.security_group_id]
