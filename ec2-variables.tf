@@ -13,7 +13,7 @@ variable "ec2_ami_filter_value" {
 }
 
 
-# Whether to create an EC2 IMDG (True or False)
+# Whether to create an EC2 SMS (True or False)
 variable "create_ec2_sms" {
   description = "Whether to create an EC2 IMDG"
   type        = bool
