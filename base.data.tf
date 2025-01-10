@@ -11,7 +11,7 @@ data "aws_vpc" "vpc" {
   }
 }
 
-data "aws_subnets" "app" {
+data "aws_subnets" "app_pod" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc.id]
@@ -19,11 +19,11 @@ data "aws_subnets" "app" {
 
   filter {
     name   = "tag:Name"
-    values = ["*app*"] # app subnet에 대한 태그 패턴
+    values = ["*app*pod*"] # app subnet에 대한 태그 패턴
   }
 }
 
-data "aws_subnets" "app_a" {
+data "aws_subnets" "app_vm_a" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc.id]
@@ -31,7 +31,7 @@ data "aws_subnets" "app_a" {
 
   filter {
     name   = "tag:Name"
-    values = ["*app*a"] # app-a subnet에 대한 태그 패턴
+    values = ["*app*vm*a*"] # app-a subnet에 대한 태그 패턴
   }
 }
 

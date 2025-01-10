@@ -74,7 +74,7 @@ module "eks" {
   }
 
   vpc_id     = data.aws_vpc.vpc.id
-  subnet_ids = data.aws_subnets.app.ids
+  subnet_ids = data.aws_subnets.app_pod.ids
   # Sandbox, Dev, Stg Only!!
   # subnet_ids               = [element(data.aws_subnets.private.ids, 0)]
   control_plane_subnet_ids = data.aws_subnets.endpoint.ids
