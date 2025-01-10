@@ -56,8 +56,8 @@ module "eks" {
       })
     }
     # eks-pod-identity-agent = {
-    #   before_compute = true
-    #   most_recent    = true
+    # before_compute = true
+    #   most_recent = true
     # }
     # aws-ebs-csi-driver = {
     #   most_recent = true
@@ -156,7 +156,6 @@ module "eks" {
     {
       "Name"                   = "eks-${var.service}-${var.environment}"
       "karpenter.sh/discovery" = "eks-${var.service}-${var.environment}"
-      # "kubernetes.io/cluster/eks-${var.service}-${var.environment}" = "owned"
     }
   )
 }

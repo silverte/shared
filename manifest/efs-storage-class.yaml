@@ -1,0 +1,34 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-efs-esp-shared-amdp
+provisioner: efs.csi.aws.com
+parameters:
+  basePath: /amdp
+  directoryPerms: '755'
+  ensureUniqueDirectory: 'true'
+  fileSystemId: fs-088212b1a253d0977
+  gid: '1001'
+  provisioningMode: efs-ap
+  subPathPattern: ${.PVC.namespace}/${.PVC.name}
+  uid: '1001'
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-efs-esp-shared-apim
+provisioner: efs.csi.aws.com
+parameters:
+  basePath: /apim
+  directoryPerms: '755'
+  ensureUniqueDirectory: 'true'
+  fileSystemId: fs-088212b1a253d0977
+  gid: '1001'
+  provisioningMode: efs-ap
+  subPathPattern: ${.PVC.namespace}/${.PVC.name}
+  uid: '1001'
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

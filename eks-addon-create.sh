@@ -5,72 +5,6 @@ export NAMESPACE="kube-system"
 export REGION="ap-northeast-2"
 
 #####################################################################################
-# Amazon EFS CSI Driver
-# https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/workloads-add-ons-available-eks.html#add-ons-aws-efs-csi-driver
-#####################################################################################
-export EFS_CSI_DIRVER_ROLE_NAME=role-esp-shared-efs-csi-driver
-eksctl create iamserviceaccount \
-    --name efs-csi-controller-sa \
-    --namespace kube-system \
-    --cluster $CLUSTER_NAME \
-    --role-name $EFS_CSI_DIRVER_ROLE_NAME \
-    --role-only \
-    --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy \
-    --approve
-TRUST_POLICY=$(aws iam get-role --role-name $EFS_CSI_DIRVER_ROLE_NAME --query 'Role.AssumeRolePolicyDocument' | \
-    sed -e 's/efs-csi-controller-sa/efs-csi-*/' -e 's/StringEquals/StringLike/')
-aws iam update-assume-role-policy --role-name $EFS_CSI_DIRVER_ROLE_NAME --policy-document "$TRUST_POLICY"
-
-
-#####################################################################################
-# Mountpoint for Amazon S3 CSI Driver
-# https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/workloads-add-ons-available-eks.html#mountpoint-for-s3-add-on
-#####################################################################################
-# aws iam create-policy --policy-name AmazonS3CSIDriverPolicy --policy-document file://<(cat <<EOF
-# {
-#    "Version": "2012-10-17",
-#    "Statement": [
-#         {
-#             "Sid": "MountpointFullBucketAccess",
-#             "Effect": "Allow",
-#             "Action": [
-#                 "s3:ListBucket"
-#             ],
-#             "Resource": [
-#                 "arn:aws:s3:::amzn-s3-demo-bucket"
-#             ]
-#         },
-#         {
-#             "Sid": "MountpointFullObjectAccess",
-#             "Effect": "Allow",
-#             "Action": [
-#                 "s3:GetObject",
-#                 "s3:PutObject",
-#                 "s3:AbortMultipartUpload",
-#                 "s3:DeleteObject"
-#             ],
-#             "Resource": [
-#                 "arn:aws:s3:::amzn-s3-demo-bucket/*"
-#             ]
-#         }
-#    ]
-# }
-# EOF
-# )
-
-# S3_CSI_DIRVER_ROLE_NAME=role-esp-shared-s3-csi-driver
-# POLICY_ARN=AmazonS3CSIDriverPolicy
-# eksctl create iamserviceaccount \
-#     --name s3-csi-driver-sa \
-#     --namespace kube-system \
-#     --cluster $CLUSTER_NAME \
-#     --attach-policy-arn $POLICY_ARN \
-#     --approve \
-#     --role-name $S3_CSI_DIRVER_ROLE_NAME \
-#     --region $REGION \
-#     --role-only
-
-#####################################################################################
 # Metrics Server
 # https://github.com/kubernetes-sigs/metrics-server/tree/master/charts/metrics-server
 #####################################################################################
@@ -87,7 +21,7 @@ helm upgrade --install metrics-server metrics-server/metrics-server \
 #####################################################################################
 # Check if the IAM policy already exists
 ALBC_ROLE_NAME=role-esp-shared-albc
-ALBC_POLICY_NAME="policy-esp-shared-albc"
+ALBC_POLICY_NAME="AWSLoadBalancerControllerIAMPolicy"
 existing_policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='${POLICY_NAME}'].Arn" --output text)
 if [ -z "$existing_policy_arn" ]; then
     # IAM Policy for AWS Load Balancer Controller
@@ -168,8 +102,58 @@ helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --vers
   --set tolerations[0].key=CriticalAddonsOnly \
   --set tolerations[0].operator=Exists \
   --set tolerations[0].effect=NoSchedule \
-#  --set replicas=1
+# --set replicas=1
 #   --set controller.resources.requests.cpu=1 \
 #   --set controller.resources.requests.memory=1Gi \
 #   --set controller.resources.limits.cpu=1 \
 #   --set controller.resources.limits.memory=1Gi \
+
+
+#####################################################################################
+# AMDP IRSA
+#####################################################################################
+export AMDP_TEKTON_ROLE_NAME=role-esp-shared-amdp-tekton
+
+ eksctl create iamserviceaccount \
+  --name sa-iam-amdp-tekton\
+  --namespace amdp-tekton \
+  --role-name $AMDP_TEKTON_ROLE_NAME \
+  --cluster eks-esp-shared \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser \
+  --override-existing-serviceaccounts \
+  --approve \
+  --region ap-northeast-2
+
+ TRUST_POLICY=$(aws iam get-role --role-name $AMDP_TEKTON_ROLE_NAME --query 'Role.AssumeRolePolicyDocument' | \
+      sed -e 's/sa-iam-amdp-tekton/*/')
+ aws iam update-assume-role-policy --role-name $AMDP_TEKTON_ROLE_NAME --policy-document "$TRUST_POLICY"
+
+#####################################################################################
+# Kyverno
+# https://kyverno.io/
+#####################################################################################
+# kyverno 레포지토리 추가
+helm repo add kyverno https://kyverno.github.io/kyverno/
+helm repo update
+
+#Kyverno 설치
+helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
+             --set tolerations[0].key=CriticalAddonsOnly \
+             --set tolerations[0].operator=Exists \
+             --set tolerations[0].effect=NoSchedule
+     #    --set admissionController.replicas=3 \
+     #    --set backgroundController.replicas=2 \
+     #    --set cleanupController.replicas=2 \
+     #    --set reportsController.replicas=2
+
+#####################################################################################
+# KEDA
+# https://keda.sh/
+#####################################################################################
+
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+helm install keda kedacore/keda --namespace kube-system \
+              --set tolerations[0].key=CriticalAddonsOnly \
+              --set tolerations[0].operator=Exists \
+              --set tolerations[0].effect=NoSchedule

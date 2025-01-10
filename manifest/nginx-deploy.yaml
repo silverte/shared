@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: arm64v8/nginx
+          #     resources:
+          #       requests:
+          #         cpu: 500m
+          #         memory: 1Gi
+          #       limits:
+          #         cpu: 500m
+          #         memory: 1Gi
+          # tolerations:
+          #   - key: 'Critical'
+          #     operator: 'Exists'
+          #     effect: 'NoSchedule'
+          volumeMounts:
+            # - name: s3-contents
+            #   mountPath: /contents
+            - name: nginx-default-conf
+              mountPath: '/etc/nginx/conf.d/default.conf'
+              readOnly: true
+              subPath: default.conf
+            - name: timezone
+              mountPath: /etc/localtime
+              subPath: Asia/Seoul
+            # - name: s3-files
+            #   mountPath: /files
+            # - name: s3-static
+            #   mountPath: /static
+      volumes:
+        # - name: s3-contents
+        #   persistentVolumeClaim:
+        #     claimName: pvc-s3-esp-dev-cm-contents
+        - name: nginx-default-conf
+          configMap:
+            name: nginx-default-conf
+            items:
+              - key: default.conf
+                path: default.conf
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo
+        # - name: s3-files
+        #   persistentVolumeClaim:
+        #     claimName: pvc-s3-esp-dev-cm-files
+        # - name: s3-static
+        #   persistentVolumeClaim:
+        #     claimName: pvc-s3-esp-dev-fo-static
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-default-conf
+  namespace: default
+data:
+  default.conf: |+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        location /static {
+            alias   /contents;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
