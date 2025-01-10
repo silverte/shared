@@ -23,6 +23,18 @@ data "aws_subnets" "app" {
   }
 }
 
+data "aws_subnets" "app_a" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["*app*a"] # app-a subnet에 대한 태그 패턴
+  }
+}
+
 data "aws_subnets" "database" {
   filter {
     name   = "vpc-id"

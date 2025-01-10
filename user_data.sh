@@ -2,6 +2,16 @@
 exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 # UserData 실행 로그를 /var/log/user-data.log에 저장
 
+# ssh 접속 시 Password 만으로도 접속 가능하도록 설정
+sudo sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# 적용을 위한 sshd 서비스 재기동
+systemctl restart sshd
+#접속을 위해 ec2-user 계정의 패스워드 설정
+echo 'ec2-user:Ezwel123!' | sudo chpasswd
+
+#TimeZone을 Asia/Seoul로 설정
+timedatectl set-timezone Asia/Seoul
+
 #####1.01 root계정 원격 접속 제한
 chgrp wheel /usr/bin/su         # /usr/bin/su 파일을 wheel 그룹으로 변경
 chmod 4750 /bin/su              # 사용 권한 변경
