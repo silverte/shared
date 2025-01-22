@@ -125,7 +125,7 @@ export AMDP_TEKTON_ROLE_NAME=role-esp-shared-amdp-tekton
   --region ap-northeast-2
 
  TRUST_POLICY=$(aws iam get-role --role-name $AMDP_TEKTON_ROLE_NAME --query 'Role.AssumeRolePolicyDocument' | \
-      sed -e 's/sa-iam-amdp-tekton/*/')
+      sed -e 's/sa-iam-amdp-tekton/*/' -e 's/StringEquals/StringLike/')
  aws iam update-assume-role-policy --role-name $AMDP_TEKTON_ROLE_NAME --policy-document "$TRUST_POLICY"
 
 #####################################################################################

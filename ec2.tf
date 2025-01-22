@@ -2,17 +2,6 @@
 # EC2 Module
 # reference: https://github.com/terraform-aws-modules/terraform-aws-ec2-instance
 ################################################################################
-# EC2 AMI
-# data "aws_ami" "ec2_ami" {
-#   most_recent = true
-#   owners      = ["amazon"]
-
-#   filter {
-#     name   = "id"
-#     values = [var.ec2_ami_filter_value]
-#   }
-# }
-
 module "ec2_sms" {
   source = "terraform-aws-modules/ec2-instance/aws"
   create = var.create_ec2_sms
@@ -20,7 +9,7 @@ module "ec2_sms" {
   name = "ec2-${var.service}-${var.environment}-sms"
 
   //ami                         = data.aws_ami.ec2_ami.id
-  ami                         = var.ec2_ami_filter_value
+  ami                         = var.ec2_ami_id
   instance_type               = var.ec2_sms_instance_type
   availability_zone           = element(local.azs, 0)
   subnet_id                   = data.aws_subnets.app_vm_a.ids[0]
@@ -88,7 +77,7 @@ module "ec2_nexus" {
   name = "ec2-${var.service}-${var.environment}-nexus"
 
   #ami               = data.aws_ami.ec2_ami.id
-  ami               = var.ec2_ami_filter_value
+  ami               = var.ec2_ami_id
   instance_type     = var.ec2_nexus_instance_type
   availability_zone = element(local.azs, 0)
   # az_a를 따로 호출 (app subnet이 가용역영별 정렬이 되지 않을 수 있음)
@@ -156,8 +145,7 @@ module "ec2_whatap" {
 
   name = "ec2-${var.service}-${var.environment}-whatap"
 
-  #ami               = data.aws_ami.ec2_ami.id
-  ami               = var.ec2_ami_filter_value
+  ami               = var.ec2_ami_id
   instance_type     = var.ec2_whatap_instance_type
   availability_zone = element(local.azs, 0)
   # az_a를 따로 호출 (app subnet이 가용역영별 정렬이 되지 않을 수 있음)

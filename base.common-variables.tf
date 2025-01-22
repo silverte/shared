@@ -50,5 +50,5 @@ variable "management_rds_kms_key_arn" {
 variable "map_migrated" {
   description = "map-migrated"
   type        = string
-  default     = "migM6LD1XNIQQ"
+  default     = ""
 }

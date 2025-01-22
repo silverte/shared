@@ -5,11 +5,11 @@ variable "ec2_root_volume_size" {
   default     = 30
 }
 
-# EC2 AMI Filter value
-variable "ec2_ami_filter_value" {
-  description = "EC2 AMI Filter value"
+# EC2 AMI ID
+variable "ec2_ami_id" {
+  description = "EC2 AMI id"
   type        = string
-  default     = "al2023-ami-2023.5.20240805.0-kernel-6.1-arm64"
+  default     = ""
 }
 
 
