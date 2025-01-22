@@ -38,9 +38,10 @@ module "iam_assumable_role_admin" {
   create_role             = true
   create_instance_profile = false
 
-  role_name           = "role-${var.service}-${var.environment}-admin"
-  role_requires_mfa   = true
-  attach_admin_policy = true
+  role_name            = "role-${var.service}-${var.environment}-admin"
+  role_requires_mfa    = true
+  attach_admin_policy  = true
+  max_session_duration = 43200
   custom_role_policy_arns = [
     module.iam_policy_restrict_ip.arn,
     module.iam_policy_restrict_region.arn,
