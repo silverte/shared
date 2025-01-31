@@ -69,28 +69,6 @@ module "iam_policy_restrict_region" {
           },
           "Effect": "Deny",
           "Resource": "*"
-      },
-      {
-          "Condition": {
-              "StringEquals": {
-                  "aws:RequestedRegion": "us-east-1"
-              }
-          },
-          "Effect": "Deny",
-          "NotAction": [
-              "iam:*",
-              "s3:*",
-              "cloudfront:*",
-              "route53:*",
-              "route53domains:*",
-              "route53resolver:*",
-              "ec2:DescribeVpcs",
-              "access-analyzer:*",
-              "acm:*",
-              "organizations:*",
-              "kms:*"
-          ],
-          "Resource": "*"
       }
   ],
   "Version": "2012-10-17"
