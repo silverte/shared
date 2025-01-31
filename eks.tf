@@ -48,8 +48,11 @@ module "eks" {
       configuration_values = jsonencode({
         env = {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
-          # ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET = "1"
+          ENABLE_PREFIX_DELEGATION           = "true"
+          WARM_PREFIX_TARGET                 = "1"
+          AWS_VPC_K8S_CNI_EXTERNALSNAT       = "true"
+          AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG = "true"
+          ENI_CONFIG_LABEL_DEF               = "topology.kubernetes.io/zone"
         }
         # Network Policy
         enableNetworkPolicy : "true",
@@ -202,28 +205,28 @@ module "eks" {
 #   }
 # }
 
-# module "mountpoint_s3_csi_irsa_role" {
-#   source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-#   count  = var.create_eks_cluster ? 1 : 0
+module "mountpoint_s3_csi_irsa_role" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  count  = var.create_eks_cluster ? 1 : 0
 
-#   role_name = "role-${var.service}-${var.environment}-s3-csi-driver"
-#   tags = merge(
-#     local.tags,
-#     {
-#       "Name" = "role-${var.service}-${var.environment}-s3-csi-driver"
-#     }
-#   )
-#   attach_mountpoint_s3_csi_policy = true
-#   mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::mountpoint-s3-csi-bucket"]
-#   mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::mountpoint-s3-csi-bucket/example/*"]
+  role_name = "role-${var.service}-${var.environment}-s3-csi-driver"
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "role-${var.service}-${var.environment}-s3-csi-driver"
+    }
+  )
+  attach_mountpoint_s3_csi_policy = true
+  mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}"]
+  mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}/*"]
 
-#   oidc_providers = {
-#     ex = {
-#       provider_arn               = module.eks.oidc_provider_arn
-#       namespace_service_accounts = ["kube-system:s3-csi-driver-sa"]
-#     }
-#   }
-# }
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:s3-csi-driver-sa"]
+    }
+  }
+}
 
 # output "configure_kubectl" {
 #   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
