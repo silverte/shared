@@ -48,8 +48,8 @@ module "eks" {
       configuration_values = jsonencode({
         env = {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
-          ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET       = "1"
+          # ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET = "1"
         }
         # Network Policy
         enableNetworkPolicy : "true",
@@ -74,7 +74,7 @@ module "eks" {
   }
 
   vpc_id     = data.aws_vpc.vpc.id
-  subnet_ids = data.aws_subnets.app_pod.ids
+  subnet_ids = data.aws_subnets.app_node.ids
   # Sandbox, Dev, Stg Only!!
   # subnet_ids               = [element(data.aws_subnets.private.ids, 0)]
   control_plane_subnet_ids = data.aws_subnets.endpoint.ids

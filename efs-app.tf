@@ -5,7 +5,7 @@
 module "efs-app" {
   source = "terraform-aws-modules/efs/aws"
   create = var.create_efs_app
-  count  = length(data.aws_subnets.app_pod) > 0 ? 1 : 0
+  count  = length(data.aws_subnets.app_node) > 0 ? 1 : 0
 
   # File system
   name           = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
@@ -42,7 +42,7 @@ module "efs-app" {
   # ]
 
   # Mount targets
-  mount_targets = { for k, v in zipmap(local.azs, data.aws_subnets.app_pod.ids) : k => { subnet_id = v } }
+  mount_targets = { for k, v in zipmap(local.azs, data.aws_subnets.app_node.ids) : k => { subnet_id = v } }
   # one zone class only!
   # mount_targets = {
   #   "${local.azs[0]}" = {
@@ -106,5 +106,5 @@ module "efs-app" {
 }
 
 output "output" {
-  value = data.aws_subnets.app_pod.ids
+  value = data.aws_subnets.app_node.ids
 }

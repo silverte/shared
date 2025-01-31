@@ -11,7 +11,7 @@ data "aws_vpc" "vpc" {
   }
 }
 
-data "aws_subnets" "app_pod" {
+data "aws_subnets" "app_node" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc.id]
@@ -19,7 +19,7 @@ data "aws_subnets" "app_pod" {
 
   filter {
     name   = "tag:Name"
-    values = ["*app*pod*"] # app subnet에 대한 태그 패턴
+    values = ["*app*node*"] # app subnet에 대한 태그 패턴
   }
 }
 
