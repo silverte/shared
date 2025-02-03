@@ -14,9 +14,20 @@ spec:
       labels:
         app: nginx
     spec:
+      #tolerations:
+      #  - key: 'CriticalAddonsOnly'
+      #    operator: 'Exists'
+      #    effect: 'NoSchedule'
+      tolerations:
+        - key: 'capacity-type'
+          operator: Equal
+          value: on-demand-arm64
+      nodeSelector:
+        capacity-type: on-demand
+      #  topology.kubernetes.io/zone: ap-northeast-2c
       containers:
         - name: nginx-container
-          image: arm64v8/nginx
+          image: nginx
           #     resources:
           #       requests:
           #         cpu: 500m
@@ -24,10 +35,6 @@ spec:
           #       limits:
           #         cpu: 500m
           #         memory: 1Gi
-          # tolerations:
-          #   - key: 'Critical'
-          #     operator: 'Exists'
-          #     effect: 'NoSchedule'
           volumeMounts:
             # - name: s3-contents
             #   mountPath: /contents

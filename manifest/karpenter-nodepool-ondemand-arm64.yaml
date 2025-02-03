@@ -1,7 +1,7 @@
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: np-esp-shared-default
+  name: np-esp-shared-on-demand-arm64
 spec:
   # Template section that describes how to template out NodeClaim resources that Karpenter will provision
   # Karpenter will consider this template to be the minimum requirements needed to provision a Node using this NodePool
@@ -10,8 +10,9 @@ spec:
   template:
     metadata:
       # Labels are arbitrary key-values that are applied to all nodes
-      # labels:
-      #   billing-team: 'my-team'
+      labels:
+        capacity-type: on-demand
+        kubernetes.io/arch: arm64
 
       # Annotations are arbitrary key-values that are applied to all nodes
       # annotations:
@@ -21,13 +22,14 @@ spec:
       nodeClassRef:
         group: karpenter.k8s.aws # Updated since only a single version will be served
         kind: EC2NodeClass
-        name: nc-esp-shared
+        name: nc-esp-shared-default
 
       # Provisioned nodes will have these taints
       # Taints may prevent pods from scheduling if they are not tolerated by the pod.
-      # taints:
-      #   - key: AppOnly
-      #     effect: NoSchedule
+      taints:
+        - key: capacity-type
+          value: on-demand-arm64
+          effect: NoSchedule
 
       # Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this
       # NodePool. These taints are expected to be temporary and some other entity (e.g. a DaemonSet) is responsible for
@@ -62,25 +64,25 @@ spec:
         # minValues here enforces the scheduler to consider at least that number of unique instance-category to schedule the pods.
         # This field is ALPHA and can be dropped or replaced at any time
         # minValues: 2
-        # - key: 'karpenter.k8s.aws/instance-family'
-        #   operator: In
-        #   values: ['m5', 'm5d', 'c5', 'c5d', 'c4', 'r4']
+        #- key: 'karpenter.k8s.aws/instance-family'
+        #  operator: In
+        #  values: ['m8', 'c8', 'r8']
         #   minValues: 5
         - key: 'karpenter.k8s.aws/instance-cpu'
           operator: In
-          values: ['2', '4', '8', '16', '32']
+          values: ['4', '8', '16', '32']
         - key: 'karpenter.k8s.aws/instance-hypervisor'
           operator: In
           values: ['nitro']
         - key: 'karpenter.k8s.aws/instance-generation'
           operator: Gt
-          values: ['2']
+          values: ['6']
         - key: 'kubernetes.io/arch'
           operator: In
           values: ['arm64']
         - key: 'karpenter.sh/capacity-type'
           operator: In
-          values: ['spot', 'on-demand']
+          values: ['on-demand']
 
   # Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes
   # Configuration in this section constrains how aggressive Karpenter can be with performing operations
@@ -99,7 +101,7 @@ spec:
     # Karpenter will respect the minimum of the currently active budgets, and will round up
     # when considering percentages. Duration and Schedule must be set together.
     budgets:
-      - nodes: 30%
+      - nodes: 10%
       # On Weekdays during business hours, don't do any deprovisioning.
       - schedule: '0 9 * * mon-fri'
         duration: 12h
@@ -114,4 +116,4 @@ spec:
   # Priority given to the NodePool when the scheduler considers which NodePool
   # to select. Higher weights indicate higher priority when comparing NodePools.
   # Specifying no weight is equivalent to specifying a weight of 0.
-  # weight: 10
+  # weight: 100

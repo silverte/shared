@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-upload-test
+  namespace: amdp-tekton
+spec:
+  selector:
+    matchLabels:
+      app: s3-upload-test
+  template:
+    metadata:
+      labels:
+        app: s3-upload-test
+    spec:
+      tolerations:
+        - key: 'capacity-type'
+          operator: Equal
+          value: 'on-demand-arm64'
+      nodeSelector:
+        capacity-type: on-demand
+      #serviceAccountName: amdp-sa-ci-vuejs-nuxt-sq-ci-esp-core-dev-esp-fo-ui
+      serviceAccountName: sa-iam-amdp-tekton
+      containers:
+        - name: amazonlinux-s3-uploader
+          image: amazonlinux:2 # Amazon Linux 2 이미지 사용
+          command: ['/bin/bash', '-c']
+          args:
+            - |
+              yum install -y aws-cli;
+              echo "This is a test file" > /tmp/test-file.txt;
+              aws s3 cp /tmp/test-file.txt s3://<your-bucket-name>/test-file.txt;
+              sleep 3600; # 컨테이너가 종료되지 않도록 대기 (디버깅용)
+          env:
+            - name: AWS_REGION
+              value: 'ap-northeast-2' # S3 버킷이 위치한 리전
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
