@@ -50,9 +50,9 @@ module "eks" {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
           ENABLE_PREFIX_DELEGATION           = "true"
           WARM_PREFIX_TARGET                 = "1"
-          AWS_VPC_K8S_CNI_EXTERNALSNAT       = "true"
           AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG = "true"
           ENI_CONFIG_LABEL_DEF               = "topology.kubernetes.io/zone"
+          # AWS_VPC_K8S_CNI_EXTERNALSNAT       = "true"
         }
         # Network Policy
         enableNetworkPolicy : "true",
