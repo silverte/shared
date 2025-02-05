@@ -156,7 +156,7 @@ module "security_group_ec2_meta" {
   version = "~> 5.0"
   create  = var.create_security_group
 
-  name            = "scg-${var.service}-${var.environment}-ec2-meta"
+  name            = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
   use_name_prefix = false
   description     = "Security group for EC2 Meta#"
   vpc_id          = data.aws_vpc.vpc.id
@@ -164,7 +164,7 @@ module "security_group_ec2_meta" {
   tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-ec2-meta"
+      "Name" = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
     },
   )
 }
