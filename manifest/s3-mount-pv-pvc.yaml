@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-s3-esp-shared-pms
+spec:
+  accessModes:
+    - ReadWriteMany # Supported options: ReadWriteMany / ReadOnlyMany
+  storageClassName: '' # Required for static provisioning
+  capacity:
+    storage: 100Gi # Ignored, required
+  claimRef: # To ensure no other PVCs can claim this PV
+    name: pvc-s3-esp-shared-pms
+    namespace: esp-pms-prd
+  csi:
+    driver: s3.csi.aws.com # Required
+    volumeAttributes:
+      bucketName: s3-esp-shared-pms
+    volumeHandle: s3-esp-shared-pms # Required
+  mountOptions:
+    - allow-other
+    - allow-delete
+    - region ap-northeast-2
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-s3-esp-shared-pms
+  namespace: esp-pms-prd
+spec:
+  accessModes:
+    - ReadWriteMany # Supported options: ReadWriteMany / ReadOnlyMany
+  storageClassName: '' # Required for static provisioning
+  resources:
+    requests:
+      storage: 100Gi # Ignored, required
+  volumeName: pv-s3-esp-shared-pms
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s3-app-test
+  namespace: esp-pms-prd
+spec:
+  tolerations:
+    - key: 'capacity-type'
+      operator: Equal
+      value: on-demand-arm64
+  nodeSelector:
+    capacity-type: on-demand
+  containers:
+    - name: app
+      image: centos
+      command: ['/bin/sh']
+      args: ['-c', "echo 'Hello from the container!' >> /data/$(date -u).txt; tail -f /dev/null"]
+      volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+  volumes:
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: pvc-s3-esp-shared-pms

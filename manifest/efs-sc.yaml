@@ -31,3 +31,16 @@ parameters:
   uid: '1001'
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pvc-esp-shared-admp
+#   namespace: amdp-tekton
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   storageClassName: sc-efs-esp-shared-amdp
+#   resources:
+#     requests:
+#       storage: 10Gi

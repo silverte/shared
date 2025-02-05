@@ -4,6 +4,13 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 export NAMESPACE="kube-system"
 export REGION="ap-northeast-2"
 
+aws eks create-addon \
+  --cluster-name <CLUSTER_NAME> \
+  --addon-name aws-efs-csi-driver \
+  --service-account-role-arn arn:aws:iam::<ACCOUNT_ID>:role/AmazonEKS_EFS_CSI_DriverRole \
+  --region <AWS_REGION>
+
+
 #####################################################################################
 # Metrics Server
 # https://github.com/kubernetes-sigs/metrics-server/tree/master/charts/metrics-server
@@ -127,6 +134,25 @@ export AMDP_TEKTON_ROLE_NAME=role-esp-shared-amdp-tekton
  TRUST_POLICY=$(aws iam get-role --role-name $AMDP_TEKTON_ROLE_NAME --query 'Role.AssumeRolePolicyDocument' | \
       sed -e 's/sa-iam-amdp-tekton/*/' -e 's/StringEquals/StringLike/')
  aws iam update-assume-role-policy --role-name $AMDP_TEKTON_ROLE_NAME --policy-document "$TRUST_POLICY"
+
+#####################################################################################
+# PMS S3 CSI Driver
+# https://github.com/awslabs/mountpoint-s3-csi-driver/blob/main/docs/install.md
+#####################################################################################
+S3_CSI_DRIVER_ROLE_NAME=role-esp-shared-s3-csi-driver
+helm upgrade --install aws-mountpoint-s3-csi-driver \
+     aws-mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver \
+   --namespace $NAMESPACE \
+   --set node.serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${S3_CSI_DRIVER_ROLE_NAME}" \
+   --set node.tolerations[0].key=CriticalAddonsOnly \
+   --set node.tolerations[0].operator=Exists \
+   --set node.tolerations[0].effect=NoSchedule \
+   --set node.tolerations[1].key=capacity-type \
+   --set node.tolerations[1].operator=Equal \
+   --set node.tolerations[1].value=on-demand-arm64 \
+   --set node.tolerations[2].key=capacity-type \
+   --set node.tolerations[2].operator=Equal \
+   --set node.tolerations[2].value=on-demand-amd64
 
 #####################################################################################
 # Kyverno
