@@ -23,6 +23,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
+
 kind: PersistentVolumeClaim
 metadata:
   name: pvc-s3-esp-shared-pms

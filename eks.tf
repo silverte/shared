@@ -108,6 +108,7 @@ module "eks" {
       instance_types  = ["c7g.large"]
       capacity_type   = "ON_DEMAND"
 
+
       lanch_template_name             = "ekslt-${var.environment}-mgmt"
       launch_template_use_name_prefix = false
       enable_monitoring               = false
@@ -120,7 +121,24 @@ module "eks" {
 
       min_size     = 1
       max_size     = 2
-      desired_size = 1
+      desired_size = 2
+
+      ebs_optimized           = false
+      disable_api_termination = false
+      enable_monitoring       = true
+
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size = 20
+            volume_type = "gp3"
+            encrypted   = true
+            # kms_key_id            = module.ebs_kms_key.key_arn
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         # This Taint aims to keep just EKS Addons and Karpenter running on this MNG

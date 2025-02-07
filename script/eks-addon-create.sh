@@ -140,6 +140,8 @@ export AMDP_TEKTON_ROLE_NAME=role-esp-shared-amdp-tekton
 # https://github.com/awslabs/mountpoint-s3-csi-driver/blob/main/docs/install.md
 #####################################################################################
 S3_CSI_DRIVER_ROLE_NAME=role-esp-shared-s3-csi-driver
+
+helm repo add aws-mountpoint-s3-csi-driver https://awslabs.github.io/mountpoint-s3-csi-driver
 helm upgrade --install aws-mountpoint-s3-csi-driver \
      aws-mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver \
    --namespace $NAMESPACE \
