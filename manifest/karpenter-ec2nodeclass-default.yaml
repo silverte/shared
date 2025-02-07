@@ -104,7 +104,7 @@ spec:
   blockDeviceMappings:
     - deviceName: /dev/xvda
       ebs:
-        volumeSize: 30Gi
+        volumeSize: 100Gi
         volumeType: gp3
         # iops: 10000
         encrypted: true

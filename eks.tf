@@ -125,7 +125,7 @@ module "eks" {
 
       ebs_optimized           = false
       disable_api_termination = false
-      enable_monitoring       = true
+      enable_monitoring       = false
 
       block_device_mappings = {
         xvda = {
