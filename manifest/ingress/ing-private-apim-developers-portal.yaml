@@ -1,0 +1,81 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:026090541481:certificate/8b216134-5f13-4aa6-89b4-47972144429d,arn:aws:acm:ap-northeast-2:026090541481:certificate/9310d049-ab5b-4780-8041-ae4450e34401
+    alb.ingress.kubernetes.io/group.name: ing-esp-shared-container
+    alb.ingress.kubernetes.io/healthcheck-healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-success-codes: '200'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthcheck-unhealthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}, {"HTTP": 80}]'
+    alb.ingress.kubernetes.io/load-balancer-name: alb-esp-shared-container
+    alb.ingress.kubernetes.io/manage-backend-security-group-rules: 'false'
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/security-groups: sg-0e905a75bedd5e9f2
+    # alb.ingress.kubernetes.io/tags: Name=alb-esp-shared-container
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.order: '200'
+  labels:
+    app: apim-developers-portal-frontend
+  name: ing-private-apim-developers-portal
+  namespace: esp-apim-dev
+spec:
+  ingressClassName: alb
+  rules:
+    - host: apim-developers-dev.ezwelesp.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: svc-apim-developers-portal-frontend
+                port:
+                  number: 80
+            path: /administration/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-developers-portal-frontend
+                port:
+                  number: 80
+            path: /user-info/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-developers-portal-backend
+                port:
+                  number: 3000
+            path: /main/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-developers-portal-backend
+                port:
+                  number: 3000
+            path: /uploads/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-tenant-manager
+                port:
+                  number: 8081
+            path: /basic/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-tenant-manager
+                port:
+                  number: 8081
+            path: /developers-backend/*
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: svc-apim-developers-portal-frontend
+                port:
+                  number: 80
+            path: /*
+            pathType: ImplementationSpecific
