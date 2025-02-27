@@ -100,7 +100,7 @@ module "efs-app" {
   tags = merge(
     local.tags,
     {
-      "Name" = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
+      "Name" = "scg-efs-${var.service}-${var.environment}-${var.efs_app_name}"
     }
   )
 }
