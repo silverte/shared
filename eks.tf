@@ -235,8 +235,16 @@ module "mountpoint_s3_csi_irsa_role" {
     }
   )
   attach_mountpoint_s3_csi_policy = true
-  mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}"]
-  mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}/*"]
+  # mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}"]
+  # mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::s3-${var.service}-${var.environment}-${var.s3_bucket_names[0]}/*"]
+
+  mountpoint_s3_csi_bucket_arns = [
+    for name in var.s3_bucket_names : "arn:aws:s3:::s3-${var.service}-${var.environment}-${name}"
+  ]
+  mountpoint_s3_csi_path_arns = [
+    for name in var.s3_bucket_names : "arn:aws:s3:::s3-${var.service}-${var.environment}-${name}/*"
+  ]
+
 
   oidc_providers = {
     ex = {

@@ -11,44 +11,38 @@ module "ecr-app" {
   repository_image_tag_mutability = "IMMUTABLE"
 
   # repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
-  create_lifecycle_policy = false
-  # repository_lifecycle_policy = jsonencode({
-  #   "rules" : [
-  #     {
-  #       "rulePriority" : 2,
-  #       "description" : "Keep at least 2 images for any tag",
-  #       "selection" : {
-  #         "tagStatus" : "any",
-  #         "countType" : "imageCountMoreThan",
-  #         "countNumber" : 2
-  #       },
-  #       "action" : {
-  #         "type" : "expire"
-  #       }
-  #     },
-  #     {
-  #       "rulePriority" : 1,
-  #       "description" : "Keep images with prefix tag pattern from the last 10 days",
-  #       "selection" : {
-  #         "tagStatus" : "tagged",
-  #         "tagPrefixList" : ["dev", "stg", "prd"],
-  #         "countType" : "sinceImagePushed",
-  #         "countUnit" : "days",
-  #         "countNumber" : 10
-  #       },
-  #       "action" : {
-  #         "type" : "expire"
-  #       }
-  #     }
-  #   ]
-  # })
+  create_lifecycle_policy = true
+  repository_lifecycle_policy = jsonencode({
+    "rules" : [
+      {
+        "rulePriority" : 1,
+        "description" : "Keep at least 3 images for any tag",
+        "selection" : {
+          "tagStatus" : "any",
+          "countType" : "imageCountMoreThan",
+          "countNumber" : 3
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      }
+      #     {
+      #       "rulePriority" : 1,
+      #       "description" : "Keep images with prefix tag pattern from the last 10 days",
+      #       "selection" : {
+      #         "tagStatus" : "tagged",
+      #         "tagPrefixList" : ["dev", "stg", "prd"],
+      #         "countType" : "sinceImagePushed",
+      #         "countUnit" : "days",
+      #         "countNumber" : 10
+      #       },
+      #       "action" : {
+      #         "type" : "expire"
+      #       }
+      #     }
+    ]
+  })
 
-  # create_repository_policy = false
-  # empty policy
-  # repository_policy = jsonencode({
-  #   Version   = "2012-10-17",
-  #   Statement = []
-  # })
   # repository_policy = jsonencode({
   #   Version = "2012-10-17",
   #   Statement = [
@@ -70,6 +64,37 @@ module "ecr-app" {
   #     }
   #   ]
   # })
+  create_repository_policy = false
+  repository_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid    = "PrivateReadOnly",
+        Effect = "Allow",
+        Principal = {
+          "AWS" : [
+            "arn:aws:iam::${var.accounts["shared"]}:root",
+            "arn:aws:iam::${var.accounts["dev"]}:root"
+          ]
+        },
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:DescribeImageScanFindings",
+          "ecr:DescribeImages",
+          "ecr:DescribeRepositories",
+          "ecr:GetAuthorizationToken",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetLifecyclePolicyPreview",
+          "ecr:GetRepositoryPolicy",
+          "ecr:ListImages",
+          "ecr:ListTagsForResource"
+        ]
+      }
+    ]
+  })
+
 
   repository_force_delete = false
 
