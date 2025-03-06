@@ -74,7 +74,9 @@ module "ecr-app" {
         Principal = {
           "AWS" : [
             "arn:aws:iam::${var.accounts["shared"]}:root",
-            "arn:aws:iam::${var.accounts["dev"]}:root"
+            "arn:aws:iam::${var.accounts["dev"]}:root",
+            "arn:aws:iam::${var.accounts["stg"]}:root",
+            "arn:aws:iam::${var.accounts["prd"]}:root"
           ]
         },
         Action = [
