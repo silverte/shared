@@ -133,38 +133,57 @@ module "security_group_alb_vm" {
 ###################################################################################
 # Security Group for EC2
 ###################################################################################
-module "security_group_ec2_sms" {
+module "security_group_ec2_ezjobs" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
   create  = var.create_security_group
 
-  name            = "scg-${var.service}-${var.environment}-ec2-sms"
+  name            = "scg-${var.service}-${var.environment}-ec2-ezjobs"
   use_name_prefix = false
-  description     = "Security group for EC2 SMS"
+  description     = "Security group for EC2 EzJobs"
   vpc_id          = data.aws_vpc.vpc.id
 
   tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-ec2-sms"
+      "Name" = "scg-${var.service}-${var.environment}-ec2-ezjobs"
     },
   )
 }
 
-module "security_group_ec2_meta" {
+
+module "security_group_ec2_whatap" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
   create  = var.create_security_group
 
-  name            = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
+  name            = "scg-${var.service}-${var.environment}-ec2-whatap"
   use_name_prefix = false
-  description     = "Security group for EC2 Meta#"
+  description     = "Security group for EC2 WhaTap"
   vpc_id          = data.aws_vpc.vpc.id
 
   tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
+      "Name" = "scg-${var.service}-${var.environment}-ec2-whatap_dev"
+    },
+  )
+}
+
+module "security_group_ec2_whatap_stg" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+  create  = var.create_security_group
+
+  name            = "scg-${var.service}-${var.environment}-ec2-whatap_stg"
+  use_name_prefix = false
+  description     = "Security group for EC2 WhaTap (stg)"
+  vpc_id          = data.aws_vpc.vpc.id
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "scg-${var.service}-${var.environment}-ec2-whatap_stg"
     },
   )
 }
@@ -187,6 +206,42 @@ module "security_group_ec2_nexus" {
   )
 }
 
+module "security_group_ec2_meta" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+  create  = var.create_security_group
+
+  name            = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
+  use_name_prefix = false
+  description     = "Security group for EC2 Meta#"
+  vpc_id          = data.aws_vpc.vpc.id
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "scg-${var.service}-${var.environment}-ec2-meta-sharp"
+    },
+  )
+}
+
+module "security_group_ec2_sms" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+  create  = var.create_security_group
+
+  name            = "scg-${var.service}-${var.environment}-ec2-sms"
+  use_name_prefix = false
+  description     = "Security group for EC2 SMS"
+  vpc_id          = data.aws_vpc.vpc.id
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "scg-${var.service}-${var.environment}-ec2-sms"
+    },
+  )
+}
+
 module "security_group_ec2_mig" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
@@ -205,20 +260,3 @@ module "security_group_ec2_mig" {
   )
 }
 
-module "security_group_ec2_whatap" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 5.0"
-  create  = var.create_security_group
-
-  name            = "scg-${var.service}-${var.environment}-ec2-whatap"
-  use_name_prefix = false
-  description     = "Security group for EC2 WhaTap"
-  vpc_id          = data.aws_vpc.vpc.id
-
-  tags = merge(
-    local.tags,
-    {
-      "Name" = "scg-${var.service}-${var.environment}-ec2-whatap"
-    },
-  )
-}
