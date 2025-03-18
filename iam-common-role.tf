@@ -220,3 +220,36 @@ module "iam_assumable_role_viewonly" {
     },
   )
 }
+
+#################################################################################
+# IAM role for VM app
+#################################################################################
+resource "aws_iam_role" "vm_app" {
+  name = "role-${var.service}-${var.environment}-vm-app-default"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_vm_default" {
+  role       = aws_iam_role.vm_app.name
+  policy_arn = module.iam_policy_vm_app.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_vm_default_initial" {
+  role       = aws_iam_role.vm_app.name
+  policy_arn = module.iam_policy_vm_app_initial.arn
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "role-${var.service}-${var.environment}-vm-app-default"
+  role = aws_iam_role.vm_app.name
+}

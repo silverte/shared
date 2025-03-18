@@ -72,7 +72,7 @@ module "ec2_ezjobs01" {
     local.tags,
     {
       "Name" = "ec2-${var.service}-${var.environment}-ezjobs01"
-    },
+    }
   )
 }
 
