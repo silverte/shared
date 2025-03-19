@@ -97,6 +97,9 @@ module "efs-app" {
   #   region = "eu-west-2"
   # }
 
+  # throughput 변경 (2025.03.19)
+  throughput_mode = "elastic"
+
   tags = merge(
     local.tags,
     {
