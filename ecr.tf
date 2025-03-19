@@ -11,16 +11,18 @@ module "ecr-app" {
   repository_image_tag_mutability = "IMMUTABLE"
 
   # repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
-  create_lifecycle_policy = true
-  repository_lifecycle_policy = jsonencode({
+
+  # "esp-amdp-gradle" 만 lifecycle을 생성하지 않음.
+  create_lifecycle_policy = each.key == "amdp-tekton/esp-amdp-gradle" ? false : true
+  repository_lifecycle_policy = each.key == "amdp-tekton/esp-amdp-gradle" ? jsonencode({}) : jsonencode({
     "rules" : [
       {
         "rulePriority" : 1,
-        "description" : "Keep at least 3 images for any tag",
+        "description" : "Keep at least 10 images for any tag",
         "selection" : {
           "tagStatus" : "any",
           "countType" : "imageCountMoreThan",
-          "countNumber" : 5
+          "countNumber" : 10
         },
         "action" : {
           "type" : "expire"
@@ -43,27 +45,7 @@ module "ecr-app" {
     ]
   })
 
-  # repository_policy = jsonencode({
-  #   Version = "2012-10-17",
-  #   Statement = [
-  #     {
-  #       Sid    = "AmdpEcrPushFromSharedVpc",
-  #       Effect = "Allow",
-  #       Principal = {
-  #         "AWS" : "arn:aws:iam::${var.accounts["shared"]}:role/role-esp-shared-amdp-tekton"
-  #       },
-  #       Action = [
-  #         "ecr:BatchCheckLayerAvailability",
-  #         "ecr:BatchGetImage",
-  #         "ecr:CompleteLayerUpload",
-  #         "ecr:GetDownloadUrlForLayer",
-  #         "ecr:InitiateLayerUpload",
-  #         "ecr:PutImage",
-  #         "ecr:UploadLayerPart"
-  #       ]
-  #     }
-  #   ]
-  # })
+  # repository_policy는 그대로 사용
   create_repository_policy = false
   repository_policy = jsonencode({
     Version = "2012-10-17",
@@ -97,6 +79,27 @@ module "ecr-app" {
     ]
   })
 
+  # repository_policy = jsonencode({
+  #   Version = "2012-10-17",
+  #   Statement = [
+  #     {
+  #       Sid    = "AmdpEcrPushFromSharedVpc",
+  #       Effect = "Allow",
+  #       Principal = {
+  #         "AWS" : "arn:aws:iam::${var.accounts["shared"]}:role/role-esp-shared-amdp-tekton"
+  #       },
+  #       Action = [
+  #         "ecr:BatchCheckLayerAvailability",
+  #         "ecr:BatchGetImage",
+  #         "ecr:CompleteLayerUpload",
+  #         "ecr:GetDownloadUrlForLayer",
+  #         "ecr:InitiateLayerUpload",
+  #         "ecr:PutImage",
+  #         "ecr:UploadLayerPart"
+  #       ]
+  #     }
+  #   ]
+  # })
 
   repository_force_delete = false
 
