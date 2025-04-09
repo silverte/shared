@@ -40,6 +40,6 @@ terraform.rc
 .pem
 
 # Ec2 User-data
-user_data.sh
-user_data_20250311_exclude_whatap.sh
-user_data_20250311_include_whatap.sh
+user_data_deprecated.sh
+user_data_app.sh
+user_data_exclude_whatap.sh

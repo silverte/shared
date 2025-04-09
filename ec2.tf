@@ -24,7 +24,7 @@ module "ec2_ezjobs01" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_20250311_include_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_ezjobs01_private_ip
   iam_instance_profile        = null
@@ -97,7 +97,7 @@ module "ec2_ezjobs02" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_20250311_include_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_ezjobs02_private_ip
   iam_instance_profile        = null
@@ -170,7 +170,7 @@ module "ec2_whatap" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_whatap_dev_private_ip
   iam_instance_profile        = null
@@ -243,7 +243,7 @@ module "ec2_whatap_stg" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_20250311_exclude_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_exclude_whatap.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_whatap_stg_private_ip
   iam_instance_profile        = null
@@ -317,7 +317,7 @@ module "ec2_nexus" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_nexus_private_ip
 
@@ -390,7 +390,7 @@ module "ec2_metasharp" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_metasharp_private_ip
   iam_instance_profile        = null
@@ -464,7 +464,7 @@ module "ec2_sms" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_20250311_include_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_sms_private_ip
   iam_instance_profile        = null
@@ -539,7 +539,7 @@ module "ec2_mig" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_mig_private_ip
   iam_instance_profile        = null
@@ -589,4 +589,52 @@ module "ec2_mig" {
       "Name" = "ec2-${var.service}-${var.environment}-mig"
     },
   )
+}
+
+
+###################################################################################
+# test(temporary)
+###################################################################################
+module "ec2_test" {
+  source = "terraform-aws-modules/ec2-instance/aws"
+  create = var.create_ec2_test
+
+  name = "ec2-${var.service}-${var.environment}-test"
+
+  instance_type               = var.ec2_test_instance_type
+  availability_zone           = element(local.azs, 0)
+  subnet_id                   = data.aws_subnets.app_vm_a.ids[0]
+  vpc_security_group_ids      = [module.security_group_ec2_test.security_group_id]
+  associate_public_ip_address = false
+  disable_api_stop            = false
+  disable_api_termination     = true
+  # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
+  hibernation                 = false
+  user_data_base64            = base64encode(file("./user_data_exclude_whatap.sh"))
+  user_data_replace_on_change = true
+  private_ip                  = var.ec2_test_private_ip
+  iam_instance_profile        = null
+
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "enabled"
+  }
+
+  enable_volume_tags = false
+  root_block_device = [
+    {
+      encrypted   = true
+      kms_key_id  = data.aws_kms_key.ebs.arn
+      volume_type = "gp3"
+      volume_size = var.ec2_root_volume_size
+      tags = merge(
+        local.tags,
+        {
+          "Name" = "ebs-${var.service}-${var.environment}-test-root"
+        },
+      )
+    },
+  ]
 }
