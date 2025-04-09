@@ -1,10 +1,11 @@
 module "alb_vm" {
   source = "terraform-aws-modules/alb/aws"
 
-  name     = "alb-${var.service}-${var.environment}-vm"
-  vpc_id   = data.aws_vpc.vpc.id
-  subnets  = data.aws_subnets.elb.ids
-  internal = true
+  name         = "alb-${var.service}-${var.environment}-vm"
+  vpc_id       = data.aws_vpc.vpc.id
+  subnets      = data.aws_subnets.elb.ids
+  internal     = true
+  idle_timeout = 1800
 
   # Security Group
   create_security_group = false
