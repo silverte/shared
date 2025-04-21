@@ -243,7 +243,7 @@ module "ec2_whatap_stg" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_exclude_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_app_exclude_whatap.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_whatap_stg_private_ip
   iam_instance_profile        = null
@@ -684,7 +684,7 @@ module "ec2_test" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_exclude_whatap.sh"))
+  user_data_base64            = base64encode(file("./user_data_app_exclude_whatap.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_test_private_ip
   iam_instance_profile        = null

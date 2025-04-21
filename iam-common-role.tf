@@ -258,3 +258,31 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "role-${var.service}-${var.environment}-vm-app-default"
   role = aws_iam_role.vm_app.name
 }
+
+#################################################################################
+# IAM role for Config
+#################################################################################
+resource "aws_iam_role" "config" {
+  name = "role-${var.service}-${var.environment}-config"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "config.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_access_config_bucket" {
+  role       = aws_iam_role.config.name
+  policy_arn = module.iam_policy_access_config_bucket.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_config_service" {
+  role       = aws_iam_role.config.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+}

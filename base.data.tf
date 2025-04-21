@@ -90,3 +90,8 @@ data "aws_kms_key" "ebs" {
 data "aws_kms_key" "rds" {
   key_id = var.management_rds_kms_key_arn
 }
+
+# config 기록을 적재하기 위한 S3
+data "aws_s3_bucket" "config" {
+  bucket = var.config_s3_bucket_name
+}

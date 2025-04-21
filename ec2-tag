@@ -1,0 +1,59 @@
+#####################################################################################
+# EC2 태그 추가 (변수가 true일 때)
+#####################################################################################
+resource "null_resource" "add_ec2_tags" {
+  count = var.create_ec2_tags ? 1 : 0
+
+  provisioner "local-exec" {
+    command     = <<EOF
+#!/bin/bash
+# 테스트: 특정 EC2 인스턴스 ID 사용
+INSTANCE_IDS="i-06fe36d8eb0eca9c4"
+
+for INSTANCE_ID in $INSTANCE_IDS; do
+  echo "Adding tags to EC2 Instance: $INSTANCE_ID"
+  aws ec2 create-tags --resources $INSTANCE_ID --tags '[
+    {"Key": "cz-owner", "Value": "heohm@hyundaiezwel.com"},
+    {"Key": "cz-project", "Value": "esp"},
+    {"Key": "cz-stage", "Value": "shared"},
+    {"Key": "environment", "Value": "shared"},
+    {"Key": "map-migrated", "Value": "migM6LD1XNIQQ"},
+    {"Key": "owners", "Value": "heohm@hyundaiezwel.com"},
+    {"Key": "service", "Value": "esp"},
+    {"Key": "Name", "Value": "ec2-${var.service}-${var.environment}-test"}
+  ]' || echo "Tags may already exist for $INSTANCE_ID"
+done
+EOF
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
+#####################################################################################
+# EC2 태그 삭제 (변수가 false일 때)
+#####################################################################################
+resource "null_resource" "remove_ec2_tags" {
+  count = var.create_ec2_tags ? 0 : 1
+
+  provisioner "local-exec" {
+    command     = <<EOF
+#!/bin/bash
+# 테스트: 특정 EC2 인스턴스 ID 사용
+INSTANCE_IDS="i-06fe36d8eb0eca9c4"
+
+for INSTANCE_ID in $INSTANCE_IDS; do
+  echo "Removing tags from EC2 Instance: $INSTANCE_ID"
+  aws ec2 delete-tags --resources $INSTANCE_ID --tags '[
+    {"Key": "cz-owner", "Value": "heohm@hyundaiezwel.com"},
+    {"Key": "cz-project", "Value": "esp"},
+    {"Key": "cz-stage", "Value": "shared"},
+    {"Key": "environment", "Value": "shared"},
+    {"Key": "map-migrated", "Value": "migM6LD1XNIQQ"},
+    {"Key": "owners", "Value": "heohm@hyundaiezwel.com"},
+    {"Key": "service", "Value": "esp"},
+    {"Key": "Name", "Value": "ec2-${var.service}-${var.environment}-test"}
+  ]' || echo "Tags already removed or not present for $INSTANCE_ID"
+done
+EOF
+    interpreter = ["/bin/bash", "-c"]
+  }
+}

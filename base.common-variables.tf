@@ -52,3 +52,10 @@ variable "map_migrated" {
   type        = string
   default     = ""
 }
+
+# Management Config S3 bucket 
+variable "config_s3_bucket_name" {
+  description = "Management Config S3 bucket"
+  type        = string
+  default     = ""
+}

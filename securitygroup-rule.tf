@@ -5,6 +5,7 @@
 resource "null_resource" "add_sg_rules_permanent" {
   count = var.create_security_group_rule_permanent ? 1 : 0
 
+  # 대응 개발 (response_development) 인 경우는 amdp 배포를 위한 포트 개방
   provisioner "local-exec" {
     command = <<EOF
 #!/bin/bash
@@ -46,6 +47,7 @@ EOF
 resource "null_resource" "remove_sg_rules_permanent" {
   count = var.create_security_group_rule_permanent ? 0 : 1
 
+  # 대응 개발 (response_development) 인 경우는 amdp 배포를 위한 포트 개방
   provisioner "local-exec" {
     command     = <<EOF
 #!/bin/bash
