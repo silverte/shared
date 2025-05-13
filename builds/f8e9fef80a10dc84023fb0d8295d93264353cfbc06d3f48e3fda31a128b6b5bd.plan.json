@@ -1,0 +1,1 @@
+{"filename": "builds/f8e9fef80a10dc84023fb0d8295d93264353cfbc06d3f48e3fda31a128b6b5bd.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/cloudwatch-log-group-retention-check-medium.py", null]]]}

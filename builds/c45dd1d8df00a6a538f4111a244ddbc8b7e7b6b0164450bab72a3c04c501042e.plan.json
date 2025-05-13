@@ -1,0 +1,1 @@
+{"filename": "builds/c45dd1d8df00a6a538f4111a244ddbc8b7e7b6b0164450bab72a3c04c501042e.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/sns-policy-principal-check.py", null]]]}

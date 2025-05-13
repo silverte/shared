@@ -1,0 +1,1 @@
+{"filename": "builds/cab5bdf0d891d32bba75df81678beabc11f64cebebe6813af7e462be86edee78.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/sqs-policy-principal-check.py", null]]]}

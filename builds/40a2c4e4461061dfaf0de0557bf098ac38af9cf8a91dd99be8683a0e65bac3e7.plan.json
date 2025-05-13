@@ -1,0 +1,1 @@
+{"filename": "builds/40a2c4e4461061dfaf0de0557bf098ac38af9cf8a91dd99be8683a0e65bac3e7.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/iam-user-access-keys-check.py", null]]]}

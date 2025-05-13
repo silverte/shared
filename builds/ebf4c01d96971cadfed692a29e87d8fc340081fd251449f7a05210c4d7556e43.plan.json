@@ -1,0 +1,1 @@
+{"filename": "builds/ebf4c01d96971cadfed692a29e87d8fc340081fd251449f7a05210c4d7556e43.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/sg-outbound-any-ip-check.py", null]]]}

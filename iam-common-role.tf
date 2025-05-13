@@ -43,10 +43,10 @@ module "iam_assumable_role_admin" {
   role_description     = "CA Role"
   max_session_duration = "43200"
   attach_admin_policy  = true
-  custom_role_policy_arns = [
-    module.iam_policy_restrict_ip.arn,
-    module.iam_policy_restrict_region.arn,
-  ]
+  # custom_role_policy_arns = [
+  #   module.iam_policy_restrict_ip.arn,
+  #   module.iam_policy_restrict_region.arn,
+  # ]
 
   tags = merge(
     local.tags,
@@ -237,6 +237,13 @@ resource "aws_iam_role" "vm_app" {
       Action = "sts:AssumeRole"
     }]
   })
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "role-${var.service}-${var.environment}-vm-app-default"
+    },
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "attach_vm_default" {
@@ -257,32 +264,4 @@ resource "aws_iam_role_policy_attachment" "attach_vm_ssm" {
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "role-${var.service}-${var.environment}-vm-app-default"
   role = aws_iam_role.vm_app.name
-}
-
-#################################################################################
-# IAM role for Config
-#################################################################################
-resource "aws_iam_role" "config" {
-  name = "role-${var.service}-${var.environment}-config"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "config.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "attach_access_config_bucket" {
-  role       = aws_iam_role.config.name
-  policy_arn = module.iam_policy_access_config_bucket.arn
-}
-
-resource "aws_iam_role_policy_attachment" "attach_config_service" {
-  role       = aws_iam_role.config.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }

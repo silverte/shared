@@ -1,0 +1,1 @@
+{"filename": "builds/4c9ee9f9014e6dde6434204716119072666928b9319ff081453964fdb0c7648e.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/ec2-tagged-check.py", null]]]}

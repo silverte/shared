@@ -1,0 +1,1 @@
+{"filename": "builds/533966ffdeccbcacba07d3e8facfa7ccae2b61bf139793525f30839701a5872d.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/s3-public-bucket-ssl-only-check.py", null]]]}

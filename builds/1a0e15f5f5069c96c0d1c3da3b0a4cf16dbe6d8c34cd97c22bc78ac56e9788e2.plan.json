@@ -1,0 +1,1 @@
+{"filename": "builds/1a0e15f5f5069c96c0d1c3da3b0a4cf16dbe6d8c34cd97c22bc78ac56e9788e2.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/ec2-delete-protection-check.py", null]]]}

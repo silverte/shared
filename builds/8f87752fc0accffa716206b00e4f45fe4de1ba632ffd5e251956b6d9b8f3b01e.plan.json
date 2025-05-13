@@ -1,0 +1,1 @@
+{"filename": "builds/8f87752fc0accffa716206b00e4f45fe4de1ba632ffd5e251956b6d9b8f3b01e.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/nlb-tls-policy-check.py", null]]]}

@@ -1,0 +1,1 @@
+{"filename": "builds/0d78f2c6b0adff716d0ec14dce78e63ccdb9305345fdb5043e7063e79300e343.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/sqs-encryption-check.py", null]]]}

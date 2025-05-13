@@ -1,0 +1,1 @@
+{"filename": "builds/b8f3e111147d60f248f0804477bb35ebabf3de92a1593c6c34ea87c29e4e5a21.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/alb-sg-rules-check.py", null]]]}

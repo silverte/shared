@@ -1,0 +1,1 @@
+{"filename": "builds/d83e5031036e1948e6b7dc1f10710fbbfe2906335c889b037297d49e7c576d78.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/vpc-peering-route-target-check.py", null]]]}

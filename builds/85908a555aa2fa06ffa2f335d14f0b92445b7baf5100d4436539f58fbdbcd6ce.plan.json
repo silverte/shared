@@ -1,0 +1,1 @@
+{"filename": "builds/85908a555aa2fa06ffa2f335d14f0b92445b7baf5100d4436539f58fbdbcd6ce.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/s3-versioning-enabled-check.py", null]]]}

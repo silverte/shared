@@ -1,0 +1,1 @@
+{"filename": "builds/09ec184592be15a9388ee9ad663430fc23a8380c5faf8078e13f6b7cef5f2c80.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/iam-ip-restriction-check.py", null]]]}

@@ -1,0 +1,1 @@
+{"filename": "builds/19766cb0f5dc6eb5ec5a34fd7e98673f265a54117f608d4113c47bf5c7783d18.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/s3-lifecycle-policy-check.py", null]]]}

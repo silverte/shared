@@ -1,0 +1,1 @@
+{"filename": "builds/f4de12523c8c66879a899a5ebd8f791794e1275f7f0ed4025c88d3d3d10c16b2.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/iam-group-admin-user-count-check.py", null]]]}

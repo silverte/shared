@@ -1,0 +1,1 @@
+{"filename": "builds/e0a7f65342c416f16ac787ea8ca5820bf3c9ac2da7426a59216607254bf45127.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/cmk-policy-principal-check.py", null]]]}

@@ -1,0 +1,1 @@
+{"filename": "builds/caf9849abfda31b8ae49d29899c2ed21e0aebe86b047bb2c3ffde4744e11d271.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/sg-all-traffic-check-high.py", null]]]}

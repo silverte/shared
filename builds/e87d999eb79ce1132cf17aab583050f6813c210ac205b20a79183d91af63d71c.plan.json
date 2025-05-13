@@ -1,0 +1,1 @@
+{"filename": "builds/e87d999eb79ce1132cf17aab583050f6813c210ac205b20a79183d91af63d71c.zip", "runtime": "python3.13", "artifacts_dir": "builds", "build_plan": [[["zip", "lambda/config/acm-transparency-logging-check.py", null]]]}
