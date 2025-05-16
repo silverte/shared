@@ -645,7 +645,7 @@ module "ec2_ogg" {
     {
       device_name = "/dev/sdf"
       volume_type = "gp3"
-      volume_size = var.ec2_ezjobs01_ebs_volume_size
+      volume_size = var.ec2_ogg_ebs_volume_size
       encrypted   = true
       kms_key_id  = data.aws_kms_key.ebs.arn
       tags = merge(
@@ -664,6 +664,81 @@ module "ec2_ogg" {
     }
   )
 }
+
+
+####################################################
+################## workbench #######################
+####################################################
+
+module "ec2_workbench" {
+  source = "terraform-aws-modules/ec2-instance/aws"
+  create = var.create_ec2_workbench
+
+  name = "ec2-${var.service}-${var.environment}-workbench"
+
+  ami               = var.ec2_ami_id
+  instance_type     = var.ec2_workbench_instance_type
+  availability_zone = element(local.azs, 0)
+  # az_a를 따로 호출 (app subnet이 가용역영별 정렬이 되지 않을 수 있음)
+  subnet_id                   = data.aws_subnets.app_vm_a.ids[0]
+  vpc_security_group_ids      = ["sg-0f2bc68c4bca4202e"]
+  associate_public_ip_address = false
+  disable_api_stop            = false
+  disable_api_termination     = true
+  # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
+  hibernation                 = false
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
+  user_data_replace_on_change = true
+  private_ip                  = var.ec2_workbench_private_ip
+  iam_instance_profile        = null
+
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "enabled"
+  }
+
+  enable_volume_tags = false
+  root_block_device = [
+    {
+      encrypted   = true
+      kms_key_id  = data.aws_kms_key.ebs.arn
+      volume_type = "gp3"
+      volume_size = var.ec2_root_volume_size
+      tags = merge(
+        local.tags,
+        {
+          "Name" = "ebs-${var.service}-${var.environment}-workbench-root"
+        },
+      )
+    },
+  ]
+
+  ebs_block_device = [
+    {
+      device_name = "/dev/sdf"
+      volume_type = "gp3"
+      volume_size = var.ec2_workbench_ebs_volume_size
+      encrypted   = true
+      kms_key_id  = data.aws_kms_key.ebs.arn
+      tags = merge(
+        local.tags,
+        {
+          "Name" = "ebs-${var.service}-${var.environment}-workbench-data01"
+        },
+      )
+    }
+  ]
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "ec2-${var.service}-${var.environment}-workbench"
+    }
+  )
+}
+
 
 
 ###################################################################################

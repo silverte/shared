@@ -10,13 +10,13 @@ resource "null_resource" "add_sg_rules_permanent" {
     command = <<EOF
 #!/bin/bash
 SG_IDS=$(aws ec2 describe-security-groups \
-  --query "SecurityGroups[?contains(GroupName, 'response_development')].GroupId" \
+  --query "SecurityGroups[?contains(GroupName, 'ec2')].GroupId" \
   --output text)
 
 for SG_ID in $SG_IDS; do
   echo "Adding rules to Security Group: $SG_ID"
   aws ec2 authorize-security-group-ingress --group-id $SG_ID --ip-permissions '[
-    {"IpProtocol":"tcp","FromPort":22,"ToPort":22,"PrefixListIds":[{"PrefixListId":"pl-0afad9bada0b816bb", "Description":"Shared AMDP deploy"}]}
+    {"IpProtocol":"tcp","FromPort":22,"ToPort":22,"PrefixListIds":[{"GroupId":"sg-0770e65c93ae82a0c", "Description":"DBSafer GateWay"}]}
   ]' 2>/dev/null || echo "Ingress rules may already exist for $SG_ID"
 done
 
@@ -58,7 +58,7 @@ SG_IDS=$(aws ec2 describe-security-groups \
 for SG_ID in $SG_IDS; do
   echo "Removing rules to Security Group: $SG_ID"
   aws ec2 revoke-security-group-ingress --group-id $SG_ID --ip-permissions '[
-    {"IpProtocol":"tcp","FromPort":22,"ToPort":22,"PrefixListIds":[{"PrefixListId":"pl-0afad9bada0b816bb"}]}
+    {"IpProtocol":"tcp","FromPort":22,"ToPort":22,"PrefixListIds":[{"GroupId":"sg-0770e65c93ae82a0c"}]}
   ]' 2>/dev/null || echo "Ingress rules may already exist for $SG_ID"
 done
 

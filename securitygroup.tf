@@ -297,6 +297,25 @@ module "security_group_ec2_gitlab" {
   )
 }
 
+# workbench는 shared admin에 사용했던 초기 sg로 코드로 (새로) 만들기에는 영향도가 큼
+# module "security_group_ec2_workbench" {
+#   source  = "terraform-aws-modules/security-group/aws"
+#   version = "~> 5.0"
+#   create  = var.create_security_group
+
+#   name            = "scg-${var.service}-${var.environment}-ec2-workbench"
+#   use_name_prefix = false
+#   description     = "Security group for EC2 WorkBench"
+#   vpc_id          = data.aws_vpc.vpc.id
+
+#   tags = merge(
+#     local.tags,
+#     {
+#       "Name" = "scg-${var.service}-${var.environment}-ec2-workbench"
+#     },
+#   )
+# }
+
 # temp
 module "security_group_ec2_test" {
   source  = "terraform-aws-modules/security-group/aws"
