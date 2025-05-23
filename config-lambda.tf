@@ -6,7 +6,7 @@
 
 locals {
   config_lambda_roles = {
-    for lambda_item in var.config_lambda_names_policys :
+    for lambda_item in var.config_custom_rules :
     lambda_item[0] => {
       actions = lambda_item[1]
     }

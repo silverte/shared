@@ -8,7 +8,7 @@
 #####################################################################################
 module "iam_policy_access_config_bucket" {
   source        = "terraform-aws-modules/iam/aws//modules/iam-policy"
-  create_policy = var.create_config_ap_northeast-2 || var.create_config_us_east_1
+  create_policy = var.create_config_ap_northeast_2 || var.create_config_us_east_1
 
   name        = "policy-${var.service}-${var.environment}-access-config-bucket"
   path        = "/"

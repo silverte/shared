@@ -11,7 +11,7 @@ module "ec2_ezjobs01" {
   source = "terraform-aws-modules/ec2-instance/aws"
   create = var.create_ec2_ezjobs01
 
-  name = "ec2-${var.service}-${var.environment}-ezjobs01"
+  name = "ec2-${var.service}-${var.environment}-ezjobs-01-a"
 
   ami               = var.ec2_ami_id
   instance_type     = var.ec2_ezjobs01_instance_type
@@ -24,7 +24,7 @@ module "ec2_ezjobs01" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_app.sh"))
+  user_data_base64            = base64encode(file("./user_data_sol.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_ezjobs01_private_ip
   iam_instance_profile        = null
@@ -71,7 +71,7 @@ module "ec2_ezjobs01" {
   tags = merge(
     local.tags,
     {
-      "Name" = "ec2-${var.service}-${var.environment}-ezjobs01"
+      "Name" = "ec2-${var.service}-${var.environment}-ezjobs-01-a"
     }
   )
 }
@@ -84,7 +84,7 @@ module "ec2_ezjobs02" {
   source = "terraform-aws-modules/ec2-instance/aws"
   create = var.create_ec2_ezjobs02
 
-  name = "ec2-${var.service}-${var.environment}-ezjobs02"
+  name = "ec2-${var.service}-${var.environment}-ezjobs-02-c"
 
   ami           = var.ec2_ami_id
   instance_type = var.ec2_ezjobs02_instance_type
@@ -97,7 +97,7 @@ module "ec2_ezjobs02" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_app.sh"))
+  user_data_base64            = base64encode(file("./user_data_sol.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_ezjobs02_private_ip
   iam_instance_profile        = null
@@ -144,7 +144,7 @@ module "ec2_ezjobs02" {
   tags = merge(
     local.tags,
     {
-      "Name" = "ec2-${var.service}-${var.environment}-ezjobs02"
+      "Name" = "ec2-${var.service}-${var.environment}-ezjobs-02-c"
     },
   )
 }
@@ -602,7 +602,7 @@ module "ec2_ogg" {
 
   name = "ec2-${var.service}-${var.environment}-ogg"
 
-  ami               = var.ec2_ami_id
+  ami               = "ami-05377cf8cfef186c2"
   instance_type     = var.ec2_ogg_instance_type
   availability_zone = element(local.azs, 0)
   # az_a를 따로 호출 (app subnet이 가용역영별 정렬이 되지 않을 수 있음)
@@ -613,7 +613,7 @@ module "ec2_ogg" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_app.sh"))
+  user_data_base64            = base64encode(file("./user_data_sol_exclude_whatap.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_ogg_private_ip
   iam_instance_profile        = null
@@ -660,7 +660,7 @@ module "ec2_ogg" {
   tags = merge(
     local.tags,
     {
-      "Name" = "ec2-${var.service}-${var.environment}-ezjobs01"
+      "Name" = "ec2-${var.service}-${var.environment}-ogg"
     }
   )
 }

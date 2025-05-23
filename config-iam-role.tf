@@ -7,7 +7,7 @@
 # IAM role for Config
 #################################################################################
 resource "aws_iam_role" "config" {
-  count = !(var.create_config_ap_northeast-2 || var.create_config_us_east_1) ? 0 : 1
+  count = !(var.create_config_ap_northeast_2 || var.create_config_us_east_1) ? 0 : 1
   name  = "role-${var.service}-${var.environment}-config"
 
   assume_role_policy = jsonencode({

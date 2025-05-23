@@ -1,9 +1,9 @@
 ################################################################################
-# Config Module (us-east-1)
+# Config Resource (us-east-1)
 ################################################################################
 
 # Configuration Recorder
-resource "aws_config_configuration_recorder" "this" {
+resource "aws_config_configuration_recorder" "config_recorder_us_east_1" {
   provider = aws.virginia
   count    = var.create_config_us_east_1 ? 1 : 0
   name     = "config-recorder"
@@ -24,24 +24,27 @@ resource "aws_config_configuration_recorder" "this" {
 }
 
 # Delivery Channel
-resource "aws_config_delivery_channel" "this" {
+resource "aws_config_delivery_channel" "delivery_channel_us_east_1" {
   provider       = aws.virginia
   count          = var.create_config_us_east_1 ? 1 : 0
   name           = "config-delivery"
   s3_bucket_name = data.aws_s3_bucket.config.id
-  depends_on     = [aws_config_configuration_recorder.this]
+  depends_on     = [aws_config_configuration_recorder.config_recorder_us_east_1]
 }
 
 # Start the recorder
-resource "aws_config_configuration_recorder_status" "this" {
+resource "aws_config_configuration_recorder_status" "recorder_status_us_east_1" {
   provider   = aws.virginia
   count      = var.create_config_us_east_1 ? 1 : 0
-  name       = aws_config_configuration_recorder.this[0].name
+  name       = aws_config_configuration_recorder.config_recorder_us_east_1[0].name
   is_enabled = true
-  depends_on = [aws_config_delivery_channel.this]
+  depends_on = [aws_config_delivery_channel.delivery_channel_us_east_1]
 }
 
-# Config Rules
+################################################################################
+# Managed Config Rules
+################################################################################
+
 resource "aws_config_config_rule" "cloudfront_associated_with_waf" {
   provider = aws.virginia
   count    = var.create_config_us_east_1 ? 1 : 0
@@ -53,11 +56,12 @@ resource "aws_config_config_rule" "cloudfront_associated_with_waf" {
   }
 
   description = "Managed rule for cloudfront associated with waf"
+
   scope {
     compliance_resource_types = ["AWS::CloudFront::Distribution"]
   }
 
-  depends_on = [aws_config_configuration_recorder_status.this]
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-cloudfront-associated-with-waf-medium"
@@ -75,7 +79,12 @@ resource "aws_config_config_rule" "cloudfront_custom_ssl_certificate" {
   }
 
   description = "Managed rule for cloudfront custom ssl certificate"
-  depends_on  = [aws_config_configuration_recorder_status.this]
+
+  scope {
+    compliance_resource_types = ["AWS::CloudFront::Distribution"]
+  }
+
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-cloudfront-custom-ssl-certificate-high"
@@ -93,7 +102,12 @@ resource "aws_config_config_rule" "cloudfront_s3_origin_access_control_enabled" 
   }
 
   description = "Managed rule for cloudfront s3 origin access control enabled"
-  depends_on  = [aws_config_configuration_recorder_status.this]
+
+  scope {
+    compliance_resource_types = ["AWS::CloudFront::Distribution"]
+  }
+
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-cloudfront-s3-origin-access-control-enabled-medium"
@@ -111,7 +125,12 @@ resource "aws_config_config_rule" "cloudfront_viewer_policy_https" {
   }
 
   description = "Managed rule for cloudfront viewer policy https"
-  depends_on  = [aws_config_configuration_recorder_status.this]
+
+  scope {
+    compliance_resource_types = ["AWS::CloudFront::Distribution"]
+  }
+
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-cloudfront-viewer-policy-https-high"
@@ -129,7 +148,12 @@ resource "aws_config_config_rule" "waf_global_webacl_not_empty" {
   }
 
   description = "Managed rule for waf global webacl not empty"
-  depends_on  = [aws_config_configuration_recorder_status.this]
+
+  scope {
+    compliance_resource_types = ["AWS::WAF::WebACL"]
+  }
+
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-waf-global-webacl-not-empty-high"
@@ -151,11 +175,12 @@ resource "aws_config_config_rule" "acm_certificate_expiration_check" {
   })
 
   description = "Managed rule for acm certificate expiration check"
+
   scope {
     compliance_resource_types = ["AWS::ACM::Certificate"]
   }
 
-  depends_on = [aws_config_configuration_recorder_status.this]
+  depends_on = [aws_config_configuration_recorder_status.recorder_status_us_east_1]
 
   tags = merge(local.tags, {
     Name = "cfr-${var.service}-${var.environment}-acm-certificate-expiration-check-medium"
